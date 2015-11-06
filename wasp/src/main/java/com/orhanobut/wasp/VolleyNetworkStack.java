@@ -179,7 +179,7 @@ public final class VolleyNetworkStack implements NetworkStack {
      */
     private static final String PROTOCOL_CHARSET = "UTF-8";
 
-    private final String requestBody;
+    private final Object requestBody;
     private final String url;
     private final Type responseObjectType;
     private final RequestCreator waspRequest;
@@ -248,7 +248,13 @@ public final class VolleyNetworkStack implements NetworkStack {
     public byte[] getBody() throws AuthFailureError {
       byte[] body;
       try {
-        body = requestBody == null ? null : requestBody.getBytes(PROTOCOL_CHARSET);
+        if (requestBody instanceof byte[]) {
+          return (byte[]) requestBody;
+        } else if (requestBody instanceof  String) {
+          body = requestBody == null ? null : ((String)requestBody).getBytes(PROTOCOL_CHARSET);
+        } else {
+          throw new IllegalArgumentException("Post request body type should be byte[] or String");
+        }
       } catch (UnsupportedEncodingException uee) {
         Logger.wtf("Unsupported Encoding while trying to get the bytes of %s using %s"
                 + requestBody

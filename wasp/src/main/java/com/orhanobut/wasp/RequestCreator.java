@@ -32,7 +32,7 @@ final class RequestCreator {
   private final String contentType;
   private final Map<String, String> headers;
   private final Map<String, String> fieldParams;
-  private final String body;
+  private final Object body;
   private final WaspRetryPolicy retryPolicy;
   private final MockHolder mock;
   private final MethodInfo methodInfo;
@@ -63,7 +63,7 @@ final class RequestCreator {
     return headers != null ? headers : Collections.<String, String>emptyMap();
   }
 
-  String getBody() {
+  Object getBody() {
     return body;
   }
 
@@ -86,7 +86,13 @@ final class RequestCreator {
             Logger.d("Header - [" + entry.getKey() + ": " + entry.getValue() + "]");
           }
         }
-        Logger.d(TextUtils.isEmpty(body) ? "Body - no body" : "Body - " + body);
+        String bodyString = null;
+        if (body instanceof String) {
+          bodyString = (String) body;
+        } else if (body instanceof  byte[]) {
+          bodyString = " body is byte[], content not print";
+        }
+        Logger.d(TextUtils.isEmpty(bodyString) ? "Body - no body" : "Body - " + body);
         Logger.d("---> END");
         break;
       default:
@@ -114,7 +120,7 @@ final class RequestCreator {
     private final String baseUrl;
     private final Object[] args;
 
-    private String body;
+    private Object body;
     private String relativeUrl;
     private WaspRetryPolicy retryPolicy;
     private Uri.Builder queryParamBuilder;
@@ -287,7 +293,7 @@ final class RequestCreator {
       }
     }
 
-    private String getBody(Object body) {
+    private Object getBody(Object body) {
       return Wasp.getParser().toBody(body);
     }
 
@@ -360,7 +366,7 @@ final class RequestCreator {
       return headers;
     }
 
-    String getBody() {
+    Object getBody() {
       return body;
     }
 

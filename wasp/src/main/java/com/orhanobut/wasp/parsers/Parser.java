@@ -22,7 +22,7 @@ public interface Parser {
    * @param body Object instance to convert.
    * @return Representation of the specified object as a String.
    */
-  String toBody(Object body);
+  Object toBody(Object body);
 
   /**
    * @return The body content type supported by this parser.
