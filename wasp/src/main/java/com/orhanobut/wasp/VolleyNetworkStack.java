@@ -177,7 +177,12 @@ public final class VolleyNetworkStack implements NetworkStack {
     /**
      * Charset for request.
      */
-    private static final String PROTOCOL_CHARSET = "UTF-8";
+//    private static final String PROTOCOL_CHARSET = "UTF-8";
+    /**
+     * changed by fengshzh, 修改post请求时body字符串编码为"ISO-8859-1"
+     * 修复使用UTF-8编码byte[]转String再转byte[]内容变化的bug.
+     */
+    private static final String PROTOCOL_CHARSET = "ISO-8859-1";
 
     private final Object requestBody;
     private final String url;
