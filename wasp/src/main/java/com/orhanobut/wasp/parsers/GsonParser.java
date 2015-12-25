@@ -35,7 +35,7 @@ public class GsonParser implements Parser {
   }
 
   @Override
-  public String toBody(Object body) {
+  public Object toBody(Object body) {
     if (body == null) {
       return null;
     }
