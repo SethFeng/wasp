@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import rx.Observable;
+//import rx.Observable;
 
 final class MethodInfo {
 
@@ -195,12 +195,12 @@ final class MethodInfo {
     }
   }
 
-  private void parseObservableResponseObjectType() {
-    Type type = method.getGenericReturnType();
-    Class rawType = RetroTypes.getRawType(type);
-    Type returnType = RetroTypes.getSupertype(type, rawType, Observable.class);
-    responseObjectType = getParameterUpperBound((ParameterizedType) returnType);
-  }
+//  private void parseObservableResponseObjectType() {
+//    Type type = method.getGenericReturnType();
+//    Class rawType = RetroTypes.getRawType(type);
+//    Type returnType = RetroTypes.getSupertype(type, rawType, Observable.class);
+//    responseObjectType = getParameterUpperBound((ParameterizedType) returnType);
+//  }
 
   private void parseParamAnnotations() {
     Annotation[][] annotationArrays = method.getParameterAnnotations();
@@ -276,11 +276,11 @@ final class MethodInfo {
       parseCallbackResponseObjectType();
       return;
     }
-    if (Utils.hasRxJavaOnClasspath() && Observable.class.isAssignableFrom(clazz)) {
-      returnType = ReturnType.OBSERVABLE;
-      parseObservableResponseObjectType();
-      return;
-    }
+//    if (Utils.hasRxJavaOnClasspath() && Observable.class.isAssignableFrom(clazz)) {
+//      returnType = ReturnType.OBSERVABLE;
+//      parseObservableResponseObjectType();
+//      return;
+//    }
     if (WaspRequest.class.isAssignableFrom(clazz)) {
       returnType = ReturnType.REQUEST;
       parseCallbackResponseObjectType();

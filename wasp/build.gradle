@@ -62,7 +62,7 @@ dependencies {
   compile 'com.google.code.gson:gson:2.3.1'
   compile 'com.squareup.okhttp:okhttp:2.5.0'
 
-  optional 'io.reactivex:rxandroid:0.25.0'
+//  optional 'io.reactivex:rxandroid:0.25.0'
 
   testCompile 'junit:junit:4.12'
   testCompile "org.mockito:mockito-core:1.9.5"
