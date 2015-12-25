@@ -13,6 +13,7 @@ import com.orhanobut.wasp.http.Headers;
 import com.orhanobut.wasp.http.Mock;
 import com.orhanobut.wasp.http.Multipart;
 import com.orhanobut.wasp.http.Path;
+import com.orhanobut.wasp.http.PathOri;
 import com.orhanobut.wasp.http.Query;
 import com.orhanobut.wasp.http.RestMethod;
 import com.orhanobut.wasp.http.RetryPolicy;
@@ -215,6 +216,14 @@ final class MethodInfo {
       Annotation annotationResult = null;
       for (Annotation annotation : annotationArrays[i]) {
         Class<? extends Annotation> annotationType = annotation.annotationType();
+        if (annotationType == PathOri.class) {
+          //TODO validate
+          String value = ((PathOri) annotation).value();
+          if (pathParams.contains(value)) {
+            throw new IllegalArgumentException("Path name should not be duplicated");
+          }
+          pathParams.add(value);
+        }
         if (annotationType == Path.class) {
           //TODO validate
           String value = ((Path) annotation).value();

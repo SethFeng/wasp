@@ -9,6 +9,7 @@ import com.orhanobut.wasp.http.Field;
 import com.orhanobut.wasp.http.FieldMap;
 import com.orhanobut.wasp.http.Header;
 import com.orhanobut.wasp.http.Path;
+import com.orhanobut.wasp.http.PathOri;
 import com.orhanobut.wasp.http.Query;
 import com.orhanobut.wasp.http.QueryMap;
 import com.orhanobut.wasp.utils.AuthToken;
@@ -146,6 +147,11 @@ final class RequestCreator {
           continue;
         }
         Class<? extends Annotation> annotationType = annotation.annotationType();
+        if (annotationType == PathOri.class) {
+          String key = ((PathOri) annotation).value();
+          addPathOriParam(key, String.valueOf(value));
+          continue;
+        }
         if (annotationType == Path.class) {
           String key = ((Path) annotation).value();
           addPathParam(key, String.valueOf(value));
@@ -310,6 +316,10 @@ final class RequestCreator {
         return "";
       }
       return queryParamBuilder.toString();
+    }
+
+    private void addPathOriParam(String key, String value) {
+        relativeUrl = relativeUrl.replace("{" + key + "}", value);
     }
 
     private void addPathParam(String key, String value) {
