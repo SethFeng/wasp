@@ -34,7 +34,7 @@
         <h1>
 <a id="介绍" class="anchor" href="#%E4%BB%8B%E7%BB%8D" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>介绍</h1>
 
-<p>通过Wasp库使用HTTP GET方式获取内容的示例看Wasp的使用方法，URL为<a href="https://api.github.com/users/sethfeng/repos">https://api.github.com/users/sethfeng/repos</a>
+<p>通过Wasp库使用HTTP GET方式获取内容的示例介绍Wasp的使用，URL为<a href="https://api.github.com/users/sethfeng/repos">https://api.github.com/users/sethfeng/repos</a>
 使用Java interface提供HTTP API：</p>
 
 <div class="highlight highlight-source-java"><pre><span class="pl-k">public</span> <span class="pl-k">interface</span> <span class="pl-en">GitHubService</span> {
@@ -112,8 +112,7 @@ query = name=sethfeng
 <p>组装出的url为<code>https://api.github.com/repos/id</code></p>
 
 <h3>
-<a id="--query" class="anchor" href="#--query" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>- <a href="https://github.com/Query" class="user-mention">@Query</a>
-</h3>
+<a id="--query" class="anchor" href="#--query" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>- query</h3>
 
 <p>query参数设置：</p>
 
@@ -122,12 +121,8 @@ query = name=sethfeng
               @Query(<span class="pl-s"><span class="pl-pds">"</span>sort<span class="pl-pds">"</span></span>) <span class="pl-smi">String</span> sort, 
               <span class="pl-k">Callback&lt;<span class="pl-k">List&lt;<span class="pl-smi">User</span>&gt;</span>&gt;</span> callback);</pre></div>
 
-<p>组装出的url为<code>https://api.github.com/repos/id/users?sort=sort</code></p>
-
-<h3>
-<a id="--querymap" class="anchor" href="#--querymap" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>- @QueryMap</h3>
-
-<p>当query参数为多个时，可使用<code>QueryMap</code>替代多个Query：</p>
+<p>组装出的url为<code>https://api.github.com/repos/id/users?sort=sort</code>
+当query参数为多个时，可使用<code>QueryMap</code>替代多个Query：</p>
 
 <div class="highlight highlight-source-java"><pre>@<span class="pl-c1">GET</span>(<span class="pl-s"><span class="pl-pds">"</span>group/{id}/users<span class="pl-pds">"</span></span>)
 <span class="pl-k">void</span> groupList(@Path(<span class="pl-s"><span class="pl-pds">"</span>id<span class="pl-pds">"</span></span>) <span class="pl-k">int</span> id, 
@@ -139,7 +134,7 @@ query = name=sethfeng
 
 <div class="highlight highlight-source-java"><pre>@<span class="pl-c1">GET</span>(<span class="pl-s"><span class="pl-pds">"</span>group/{id}/users<span class="pl-pds">"</span></span>)
 <span class="pl-k">void</span> groupList(@Path(<span class="pl-s"><span class="pl-pds">"</span>id<span class="pl-pds">"</span></span>) <span class="pl-k">int</span> id, 
-              <span class="pl-k">Map&lt;<span class="pl-smi">String</span>, <span class="pl-smi">String</span>&gt;</span> query, 
+              @<span class="pl-smi">QueryMap</span> <span class="pl-k">Map&lt;<span class="pl-smi">String</span>, <span class="pl-smi">String</span>&gt;</span> query, 
               <span class="pl-k">Callback&lt;<span class="pl-k">List&lt;<span class="pl-smi">User</span>&gt;</span>&gt;</span> callback);</pre></div>
 
 <p>相应地，query参数要封装成Map传入：</p>
