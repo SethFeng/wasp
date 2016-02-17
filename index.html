@@ -122,7 +122,7 @@ query = name=sethfeng
               <span class="pl-k">Callback&lt;<span class="pl-k">List&lt;<span class="pl-smi">User</span>&gt;</span>&gt;</span> callback);</pre></div>
 
 <p>组装出的url为<code>https://api.github.com/repos/id/users?sort=sort</code>
-当query参数为多个时，可使用<code>QueryMap</code>替代多个Query：</p>
+当query参数为多个时，可使用<code>QueryMap</code>替代多个<code>Query</code>：</p>
 
 <div class="highlight highlight-source-java"><pre>@<span class="pl-c1">GET</span>(<span class="pl-s"><span class="pl-pds">"</span>group/{id}/users<span class="pl-pds">"</span></span>)
 <span class="pl-k">void</span> groupList(@Path(<span class="pl-s"><span class="pl-pds">"</span>id<span class="pl-pds">"</span></span>) <span class="pl-k">int</span> id, 
@@ -143,7 +143,7 @@ query = name=sethfeng
 query<span class="pl-k">.</span>put(<span class="pl-s"><span class="pl-pds">"</span>sort<span class="pl-pds">"</span></span>, sort);
 query<span class="pl-k">.</span>put(<span class="pl-s"><span class="pl-pds">"</span>limit<span class="pl-pds">"</span></span>, limit);</pre></div>
 
-<p>组装出的url为<code>https://api.github.com/repos/id/users?sort=sort&amp;limit=limit</code></p>
+<p>组装出的url为<code>https://api.github.com/repos/id/users?sort=sort&amp;limit=limit</code>。</p>
 
 <h2>
 <a id="解析器" class="anchor" href="#%E8%A7%A3%E6%9E%90%E5%99%A8" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>解析器</h2>
@@ -218,6 +218,22 @@ query<span class="pl-k">.</span>put(<span class="pl-s"><span class="pl-pds">"</s
 
 <span class="pl-c">// 取消请求</span>
 request<span class="pl-k">.</span>cancel();</pre></div>
+
+<h3>
+<a id="tips" class="anchor" href="#tips" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Tips</h3>
+
+<ul>
+<li>请求中参数较多时，建议统一使用<code>@QueryMap</code>，而不用多个<code>@Query</code>。</li>
+<li>请求的主机若需要动态更改，主机名可使用参数传入。此时<code>@EndPoint</code>值传<code>""</code>，主机名参数使用<code>@PathOri</code>，防止被URLEncoder编码。</li>
+</ul>
+
+<div class="highlight highlight-source-java"><pre>@EndPoint(<span class="pl-s"><span class="pl-pds">"</span><span class="pl-pds">"</span></span>)
+@<span class="pl-c1">GET</span>(<span class="pl-s"><span class="pl-pds">"</span>http://{host}<span class="pl-pds">"</span></span> <span class="pl-k">+</span> <span class="pl-s"><span class="pl-pds">"</span>/repos<span class="pl-pds">"</span></span>)
+<span class="pl-smi">WaspRequest</span> getMessage(
+        @PathOri(<span class="pl-s"><span class="pl-pds">"</span>host<span class="pl-pds">"</span></span>) <span class="pl-smi">String</span> host,
+        @<span class="pl-smi">QueryMap</span> <span class="pl-smi">Map</span> params,
+        <span class="pl-k">Callback&lt;<span class="pl-smi">String</span>&gt;</span> callback
+);</pre></div>
       </section>
     </div>
 
