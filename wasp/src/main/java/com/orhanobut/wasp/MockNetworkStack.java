@@ -40,13 +40,18 @@ class MockNetworkStack implements NetworkStack {
     MethodInfo methodInfo = waspRequest.getMethodInfo();
     Type responseType = methodInfo.getResponseObjectType();
 
-    String responseString;
+    String responseString = null;
     Object responseObject;
 
     if (TextUtils.isEmpty(mock.getPath())) {
       //Create mock object and return
       responseObject = MockFactory.createMockObject(responseType);
-      responseString = Wasp.getParser().toBody(responseObject);
+      Object obj = Wasp.getParser().toBody(responseObject);
+        if (obj instanceof String) {
+            responseString = (String) obj;
+        } else if (obj instanceof byte[]) {
+            responseString = new String((byte[])obj);
+        }
     } else {
       responseString = MockFactory.readMockResponse(context, mock.getPath());
       try {
@@ -90,13 +95,18 @@ class MockNetworkStack implements NetworkStack {
     MethodInfo methodInfo = requestCreator.getMethodInfo();
     Type responseType = methodInfo.getResponseObjectType();
 
-    String responseString;
+    String responseString = null;
     Object responseObject;
 
     if (TextUtils.isEmpty(mock.getPath())) {
       //Create mock object and return
       responseObject = MockFactory.createMockObject(responseType);
-      responseString = Wasp.getParser().toBody(responseObject);
+        Object obj = Wasp.getParser().toBody(responseObject);
+        if (obj instanceof String) {
+            responseString = (String) obj;
+        } else if (obj instanceof byte[]) {
+            responseString = new String((byte[])obj);
+        }
     } else {
       responseString = MockFactory.readMockResponse(context, mock.getPath());
       try {
