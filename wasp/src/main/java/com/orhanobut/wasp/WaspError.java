@@ -1,7 +1,6 @@
 package com.orhanobut.wasp;
 
-import android.text.TextUtils;
-
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.orhanobut.wasp.utils.LogLevel;
 
 import java.lang.reflect.Type;
@@ -46,12 +45,13 @@ public class WaspError extends Throwable {
     if (response == null) {
       return null;
     }
-    String body = response.getBody();
-    if (TextUtils.isEmpty(body)) {
+    byte[] body = response.getBody();
+    if (body == null) {
       return null;
     }
     try {
-      return Wasp.getParser().fromBody(response.getBody(), type);
+      return Wasp.getParser().fromBody(response.getBody(), type,
+              HttpHeaderParser.parseCharset(response.getHeaders(), "UTF-8"));
     } catch (Exception e) {
       throw new RuntimeException(e);
     }

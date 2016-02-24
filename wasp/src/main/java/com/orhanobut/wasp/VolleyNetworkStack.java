@@ -156,14 +156,20 @@ public final class VolleyNetworkStack implements NetworkStack {
           String body;
           try {
             body = new String(
-                error.networkResponse.data, HttpHeaderParser.parseCharset(response.headers)
+                error.networkResponse.data, HttpHeaderParser.parseCharset(response.headers, "UTF-8")
             );
           } catch (UnsupportedEncodingException e) {
             body = "Unable to parse error body!!!!!";
           }
+          byte[] bodyBytes = null;
+          try {
+            bodyBytes = body.getBytes("UTF-8");
+          } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+          }
           builder.setStatusCode(response.statusCode)
               .setHeaders(response.headers)
-              .setBody(body)
+              .setBody(bodyBytes)
               .setLength(response.data.length);
         }
       }
@@ -175,14 +181,9 @@ public final class VolleyNetworkStack implements NetworkStack {
   private static class VolleyRequest extends Request<Response> {
 
     /**
-     * Charset for request.
+     * Charset for request, and default charset for response
      */
-//    private static final String PROTOCOL_CHARSET = "UTF-8";
-    /**
-     * changed by fengshzh, 修改post请求时body字符串编码为"ISO-8859-1"
-     * 修复使用UTF-8编码byte[]转String再转byte[]内容变化的bug.
-     */
-    private static final String PROTOCOL_CHARSET = "ISO-8859-1";
+    private static final String PROTOCOL_CHARSET = "UTF-8";
 
     private final Object requestBody;
     private final String url;
@@ -213,14 +214,14 @@ public final class VolleyNetworkStack implements NetworkStack {
     protected com.android.volley.Response parseNetworkResponse(NetworkResponse response) {
       try {
         byte[] data = response.data;
-        String body = new String(data, HttpHeaderParser.parseCharset(response.headers));
-        Object responseObject = Wasp.getParser().fromBody(body, responseObjectType);
+        Object responseObject = Wasp.getParser().fromBody(data, responseObjectType,
+                HttpHeaderParser.parseCharset(response.headers, PROTOCOL_CHARSET));
 
         Response waspResponse = new Response.Builder()
             .setUrl(url)
             .setStatusCode(response.statusCode)
             .setHeaders(response.headers)
-            .setBody(body)
+            .setBody(data)
             .setResponseObject(responseObject)
             .setLength(data.length)
             .setNetworkTime(response.networkTimeMs)
@@ -251,21 +252,23 @@ public final class VolleyNetworkStack implements NetworkStack {
 
     @Override
     public byte[] getBody() throws AuthFailureError {
-      byte[] body;
-      try {
+      byte[] body = null;
+      if (requestBody != null) {
         if (requestBody instanceof byte[]) {
-          return (byte[]) requestBody;
-        } else if (requestBody instanceof  String) {
-          body = requestBody == null ? null : ((String)requestBody).getBytes(PROTOCOL_CHARSET);
+          body = (byte[]) requestBody;
+        } else if (requestBody instanceof String) {
+          try {
+            body = ((String) requestBody).getBytes(PROTOCOL_CHARSET);
+          } catch (UnsupportedEncodingException uee) {
+            Logger.wtf("Unsupported Encoding while trying to get the bytes of %s using %s"
+                            + requestBody
+                            + PROTOCOL_CHARSET
+            );
+            return null;
+          }
         } else {
-          throw new IllegalArgumentException("Post request body type should be byte[] or String");
+          Logger.e("Post request body type should be byte[] or String: " + requestBody);
         }
-      } catch (UnsupportedEncodingException uee) {
-        Logger.wtf("Unsupported Encoding while trying to get the bytes of %s using %s"
-                + requestBody
-                + PROTOCOL_CHARSET
-        );
-        return null;
       }
       if (body == null) {
         return super.getBody();

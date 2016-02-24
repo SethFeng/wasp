@@ -9,7 +9,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Define the path of the endpoint
- * Difference from PATH, the value will not be encoded by URLEncoder
+ * Different from PATH, the value will not be encoded by URLEncoder
  */
 @Documented
 @Target(PARAMETER)
