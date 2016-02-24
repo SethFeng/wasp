@@ -217,7 +217,6 @@ final class MethodInfo {
       for (Annotation annotation : annotationArrays[i]) {
         Class<? extends Annotation> annotationType = annotation.annotationType();
         if (annotationType == PathOri.class) {
-          //TODO validate
           String value = ((PathOri) annotation).value();
           if (pathParams.contains(value)) {
             throw new IllegalArgumentException("Path name should not be duplicated");
@@ -225,7 +224,6 @@ final class MethodInfo {
           pathParams.add(value);
         }
         if (annotationType == Path.class) {
-          //TODO validate
           String value = ((Path) annotation).value();
           if (pathParams.contains(value)) {
             throw new IllegalArgumentException("Path name should not be duplicated");
@@ -245,7 +243,6 @@ final class MethodInfo {
           isBodyAdded = true;
         }
         if (annotationType == Query.class) {
-          //TODO validate
           String value = ((Query) annotation).value();
           if (queryParams.contains(value)) {
             throw new IllegalArgumentException("Query name should not be duplicated");

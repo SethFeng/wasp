@@ -39,12 +39,12 @@ public class ExGsonParser extends GsonParser {
     }
 
     /**
-     * 将参数body转换成网络库能处理的POST body格式
+     * 将参数body转换成网络库能处理的POST body格式.
+     * 最终交给{@Link com.orhanobut.wasp.VolleyRequest#getBody()}
      *
      * @param body 参数body,支持的类型有:
-     *             byte[]
-     *             String
-     *             Map<String, Object>
+     *             byte[]/String: 直接返回
+     *             Map<String, Object>: 转化为MIME为application/x-www-form-urlencoded形式(a=1&b=2)
      * @return 格式转化后的body,格式为byte[]/String
      */
     @Override
@@ -53,21 +53,22 @@ public class ExGsonParser extends GsonParser {
             return body;
         }
 
-        if (!(body instanceof Map)) {
-            throw new IllegalArgumentException("BodyMap accepts only Map instances");
-        }
-        Map<String, Object> map;
-        try {
-            map = (Map<String, Object>) body;
-        } catch (Exception e) {
-            throw new ClassCastException("Map type should be Map<String,Object>");
+        if (body instanceof Map) {
+            Map<String, Object> map;
+            try {
+                map = (Map<String, Object>) body;
+            } catch (Exception e) {
+                throw new ClassCastException("Map type should be Map<String,Object>");
+            }
+
+            Uri.Builder bodyBuilder = new Uri.Builder();
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                bodyBuilder.appendQueryParameter(entry.getKey(), entry.getValue().toString());
+            }
+
+            return bodyBuilder.toString().substring(1); // 去掉"?"
         }
 
-        Uri.Builder bodyBuilder = new Uri.Builder();
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
-            bodyBuilder.appendQueryParameter(entry.getKey(), entry.getValue().toString());
-        }
-
-        return bodyBuilder.toString().substring(1); // 去掉"?"
+        return super.toBody(body);
     }
 }
