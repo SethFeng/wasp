@@ -14,8 +14,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import rx.Observable;
-import rx.Subscriber;
+//import rx.Observable;
+//import rx.Subscriber;
 
 final class NetworkHandler implements InvocationHandler {
 
@@ -90,8 +90,8 @@ final class NetworkHandler implements InvocationHandler {
         return invokeCallbackRequest(proxy, method, args);
       case REQUEST:
         return invokeWaspRequest(proxy, method, args);
-      case OBSERVABLE:
-        return invokeObservable(method, args);
+//      case OBSERVABLE:
+//        return invokeObservable(method, args);
       case SYNC:
         return invokeSyncRequest(method, args);
       default:
@@ -114,31 +114,31 @@ final class NetworkHandler implements InvocationHandler {
     return networkStack.invokeRequest(requestCreator);
   }
 
-  private Object invokeObservable(final Method method, final Object[] args) {
-    final MethodInfo methodInfo = methodInfoCache.get(method.getName());
-
-    return Observable.create(new Observable.OnSubscribe<Object>() {
-      @Override
-      public void call(final Subscriber<? super Object> subscriber) {
-        try {
-          RequestCreator requestCreator = new RequestCreator.Builder(methodInfo, args, endPoint)
-              .setRequestInterceptor(requestInterceptor)
-              .build();
-          requestCreator.log();
-
-          if (networkMode == NetworkMode.MOCK && methodInfo.isMocked()) {
-            subscriber.onNext(MockNetworkStack.getDefault(context).invokeRequest(requestCreator));
-            return;
-          }
-
-          subscriber.onNext(networkStack.invokeRequest(requestCreator));
-          subscriber.onCompleted();
-        } catch (Exception e) {
-          subscriber.onError(e);
-        }
-      }
-    });
-  }
+//  private Object invokeObservable(final Method method, final Object[] args) {
+//    final MethodInfo methodInfo = methodInfoCache.get(method.getName());
+//
+//    return Observable.create(new Observable.OnSubscribe<Object>() {
+//      @Override
+//      public void call(final Subscriber<? super Object> subscriber) {
+//        try {
+//          RequestCreator requestCreator = new RequestCreator.Builder(methodInfo, args, endPoint)
+//              .setRequestInterceptor(requestInterceptor)
+//              .build();
+//          requestCreator.log();
+//
+//          if (networkMode == NetworkMode.MOCK && methodInfo.isMocked()) {
+//            subscriber.onNext(MockNetworkStack.getDefault(context).invokeRequest(requestCreator));
+//            return;
+//          }
+//
+//          subscriber.onNext(networkStack.invokeRequest(requestCreator));
+//          subscriber.onCompleted();
+//        } catch (Exception e) {
+//          subscriber.onError(e);
+//        }
+//      }
+//    });
+//  }
 
   private Object invokeWaspRequest(Object proxy, final Method method, final Object[] args) {
     return invokeCallbackRequest(proxy, method, args);

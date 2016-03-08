@@ -40,17 +40,22 @@ class MockNetworkStack implements NetworkStack {
     MethodInfo methodInfo = waspRequest.getMethodInfo();
     Type responseType = methodInfo.getResponseObjectType();
 
-    String responseString;
+    byte[] responseString = null;
     Object responseObject;
 
     if (TextUtils.isEmpty(mock.getPath())) {
       //Create mock object and return
       responseObject = MockFactory.createMockObject(responseType);
-      responseString = Wasp.getParser().toBody(responseObject);
+      Object obj = Wasp.getParser().toBody(responseObject);
+        if (obj instanceof String) {
+            responseString = ((String) obj).getBytes();
+        } else if (obj instanceof byte[]) {
+            responseString = (byte[])obj;
+        }
     } else {
-      responseString = MockFactory.readMockResponse(context, mock.getPath());
+      responseString = MockFactory.readMockResponse(context, mock.getPath()).getBytes();
       try {
-        responseObject = Wasp.getParser().fromBody(responseString, responseType);
+        responseObject = Wasp.getParser().fromBody(responseString, responseType, "UTF-8");
       } catch (IOException e) {
         throw new RuntimeException("Mock file \"" + mock.getPath()
             + "\" is in an invalid format", e);
@@ -63,7 +68,7 @@ class MockNetworkStack implements NetworkStack {
         .setHeaders(Collections.<String, String>emptyMap())
         .setBody(responseString)
         .setResponseObject(responseObject)
-        .setLength(responseString.length())
+        .setLength(responseString.length)
         .setNetworkTime(1000)
         .build();
 
@@ -90,17 +95,22 @@ class MockNetworkStack implements NetworkStack {
     MethodInfo methodInfo = requestCreator.getMethodInfo();
     Type responseType = methodInfo.getResponseObjectType();
 
-    String responseString;
+    byte[] responseString = null;
     Object responseObject;
 
     if (TextUtils.isEmpty(mock.getPath())) {
       //Create mock object and return
       responseObject = MockFactory.createMockObject(responseType);
-      responseString = Wasp.getParser().toBody(responseObject);
+        Object obj = Wasp.getParser().toBody(responseObject);
+        if (obj instanceof String) {
+            responseString = ((String) obj).getBytes();
+        } else if (obj instanceof byte[]) {
+            responseString = (byte[])obj;
+        }
     } else {
-      responseString = MockFactory.readMockResponse(context, mock.getPath());
+      responseString = MockFactory.readMockResponse(context, mock.getPath()).getBytes();
       try {
-        responseObject = Wasp.getParser().fromBody(responseString, responseType);
+        responseObject = Wasp.getParser().fromBody(responseString, responseType, "UTF-8");
       } catch (IOException e) {
         throw new RuntimeException("Mock file \"" + mock.getPath()
             + "\" is in an invalid format", e);
@@ -113,7 +123,7 @@ class MockNetworkStack implements NetworkStack {
         .setHeaders(Collections.<String, String>emptyMap())
         .setBody(responseString)
         .setResponseObject(responseObject)
-        .setLength(responseString.length())
+        .setLength(responseString.length)
         .setNetworkTime(1000)
         .build();
 

@@ -11,10 +11,11 @@ public interface Parser {
    * @param content HTTP response body content.
    * @param <T>     Target object type.
    * @param type    Target object type.
+   * @param charset Default string charset.
    * @return Instance of {@code <T>}.
    * @throws IOException if parsing was unable to complete.
    */
-  <T> T fromBody(String content, Type type) throws IOException;
+  <T> T fromBody(byte[] content, Type type, String charset) throws IOException;
 
   /**
    * Convert an object to an appropriate representation for HTTP transport.
@@ -22,7 +23,7 @@ public interface Parser {
    * @param body Object instance to convert.
    * @return Representation of the specified object as a String.
    */
-  String toBody(Object body);
+  Object toBody(Object body);
 
   /**
    * @return The body content type supported by this parser.

@@ -1,7 +1,6 @@
 package com.orhanobut.wasp;
 
 import android.content.Context;
-import android.text.TextUtils;
 
 import com.orhanobut.wasp.parsers.GsonParser;
 import com.orhanobut.wasp.parsers.Parser;
@@ -61,43 +60,6 @@ public class Wasp {
     }
     NetworkHandler handler = NetworkHandler.newInstance(service, builder);
     return (T) handler.getProxyClass();
-  }
-
-  /**
-   * Initiate download and load image process
-   */
-  public static class Image {
-
-    private static ImageHandler imageHandler;
-
-    public static ImageCreator.Builder from(String path) {
-      if (TextUtils.isEmpty(path)) {
-        throw new IllegalArgumentException("Path cannot be empty or null");
-      }
-      return new ImageCreator.Builder()
-          .setImageHandler(getImageHandler())
-          .from(path);
-    }
-
-    private static ImageHandler getImageHandler() {
-      if (context == null) {
-        throw new NullPointerException("Wasp.Builder should be instantiated first");
-      }
-      if (imageHandler == null) {
-        imageHandler = new InternalImageHandler(
-            new BitmapWaspCache(), new VolleyImageNetworkHandler(context, httpStack)
-        );
-      }
-      return imageHandler;
-    }
-
-    public static void clearCache() {
-      if (imageHandler == null) {
-        return;
-      }
-      imageHandler.clearCache();
-    }
-
   }
 
   /**

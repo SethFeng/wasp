@@ -1,7 +1,6 @@
 package com.orhanobut.wasp;
 
-import android.text.TextUtils;
-
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.orhanobut.wasp.utils.LogLevel;
 
 import java.util.Collections;
@@ -15,7 +14,7 @@ public final class Response {
 
   private final Object responseObject;
   private final Map<String, String> headers;
-  private final String body;
+  private final byte[] body;
   private final String url;
   private final LogLevel logLevel;
 
@@ -56,7 +55,7 @@ public final class Response {
    * Response body. May be {@code null}.
    */
   @SuppressWarnings("unused")
-  public String getBody() {
+  public byte[] getBody() {
     return body;
   }
 
@@ -84,7 +83,13 @@ public final class Response {
   }
 
   private String getFormattedBody() {
-    return body.replace("\n", "").replace("\r", "").replace("\t", "");
+    try {
+      return (new String(body, HttpHeaderParser.parseCharset(headers, "UTF-8")))
+              .replace("\n", "").replace("\r", "").replace("\t", "");
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 
   void log() {
@@ -98,7 +103,7 @@ public final class Response {
             Logger.d("Header - [" + entry.getKey() + ": " + entry.getValue() + "]");
           }
         }
-        Logger.d(TextUtils.isEmpty(body) ? "Body - no body" : "Body - " + getFormattedBody());
+        Logger.d(body == null ? "Body - no body" : "Body - " + getFormattedBody());
         Logger.d("<--- END " + "(Size: " + length + " bytes - Network time: "
             + networkTime + " ms)");
         break;
@@ -111,7 +116,7 @@ public final class Response {
 
     private String url;
     private Map<String, String> headers;
-    private String body;
+    private byte[] body;
     private Object responseObject;
 
     private int statusCode;
@@ -149,11 +154,11 @@ public final class Response {
       return this;
     }
 
-    String getBody() {
+    byte[] getBody() {
       return body;
     }
 
-    Builder setBody(String body) {
+    Builder setBody(byte[] body) {
       this.body = body;
       return this;
     }

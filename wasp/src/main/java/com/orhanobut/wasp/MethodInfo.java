@@ -13,6 +13,7 @@ import com.orhanobut.wasp.http.Headers;
 import com.orhanobut.wasp.http.Mock;
 import com.orhanobut.wasp.http.Multipart;
 import com.orhanobut.wasp.http.Path;
+import com.orhanobut.wasp.http.PathOri;
 import com.orhanobut.wasp.http.Query;
 import com.orhanobut.wasp.http.RestMethod;
 import com.orhanobut.wasp.http.RetryPolicy;
@@ -31,7 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import rx.Observable;
+//import rx.Observable;
 
 final class MethodInfo {
 
@@ -194,12 +195,12 @@ final class MethodInfo {
     }
   }
 
-  private void parseObservableResponseObjectType() {
-    Type type = method.getGenericReturnType();
-    Class rawType = RetroTypes.getRawType(type);
-    Type returnType = RetroTypes.getSupertype(type, rawType, Observable.class);
-    responseObjectType = getParameterUpperBound((ParameterizedType) returnType);
-  }
+//  private void parseObservableResponseObjectType() {
+//    Type type = method.getGenericReturnType();
+//    Class rawType = RetroTypes.getRawType(type);
+//    Type returnType = RetroTypes.getSupertype(type, rawType, Observable.class);
+//    responseObjectType = getParameterUpperBound((ParameterizedType) returnType);
+//  }
 
   private void parseParamAnnotations() {
     Annotation[][] annotationArrays = method.getParameterAnnotations();
@@ -215,8 +216,14 @@ final class MethodInfo {
       Annotation annotationResult = null;
       for (Annotation annotation : annotationArrays[i]) {
         Class<? extends Annotation> annotationType = annotation.annotationType();
+        if (annotationType == PathOri.class) {
+          String value = ((PathOri) annotation).value();
+          if (pathParams.contains(value)) {
+            throw new IllegalArgumentException("Path name should not be duplicated");
+          }
+          pathParams.add(value);
+        }
         if (annotationType == Path.class) {
-          //TODO validate
           String value = ((Path) annotation).value();
           if (pathParams.contains(value)) {
             throw new IllegalArgumentException("Path name should not be duplicated");
@@ -236,7 +243,6 @@ final class MethodInfo {
           isBodyAdded = true;
         }
         if (annotationType == Query.class) {
-          //TODO validate
           String value = ((Query) annotation).value();
           if (queryParams.contains(value)) {
             throw new IllegalArgumentException("Query name should not be duplicated");
@@ -267,11 +273,11 @@ final class MethodInfo {
       parseCallbackResponseObjectType();
       return;
     }
-    if (Utils.hasRxJavaOnClasspath() && Observable.class.isAssignableFrom(clazz)) {
-      returnType = ReturnType.OBSERVABLE;
-      parseObservableResponseObjectType();
-      return;
-    }
+//    if (Utils.hasRxJavaOnClasspath() && Observable.class.isAssignableFrom(clazz)) {
+//      returnType = ReturnType.OBSERVABLE;
+//      parseObservableResponseObjectType();
+//      return;
+//    }
     if (WaspRequest.class.isAssignableFrom(clazz)) {
       returnType = ReturnType.REQUEST;
       parseCallbackResponseObjectType();
